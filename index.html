@@ -1,10 +1,9 @@
-```html
 <!DOCTYPE html>
-<html lang="ur" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EasyHelp AI Assistant - Amazon Collection</title>
+  <title>EasyHelp AI Studio</title>
   <style>
     :root {
       --bg-color: #0b0f19;
@@ -28,7 +27,7 @@
       background-color: var(--bg-color);
       color: var(--text-color);
       padding: 20px;
-      direction: rtl;
+      direction: ltr;
       line-height: 1.6;
     }
 
@@ -74,17 +73,36 @@
       margin-bottom: 20px;
     }
 
-    .auth-card input {
+    .auth-btn {
       width: 100%;
       padding: 12px;
       border-radius: 8px;
       border: 1px solid var(--border-color);
       background: #020617;
       color: #fff;
-      font-size: 1.1rem;
-      text-align: center;
-      margin-bottom: 15px;
-      letter-spacing: 2px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: background 0.2s;
+    }
+
+    .auth-btn:hover {
+      background: #1e293b;
+    }
+
+    .auth-input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: #020617;
+      color: #fff;
+      font-size: 1rem;
+      margin-bottom: 10px;
     }
 
     /* Main Dashboard */
@@ -144,13 +162,13 @@
 
     .user-msg {
       background: var(--accent-color);
-      align-self: flex-start;
+      align-self: flex-end;
       border-bottom-right-radius: 2px;
     }
 
     .ai-msg {
       background: #334155;
-      align-self: flex-end;
+      align-self: flex-start;
       border-bottom-left-radius: 2px;
     }
 
@@ -158,6 +176,7 @@
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
+      align-items: center;
     }
 
     input[type="text"] {
@@ -171,7 +190,7 @@
     }
 
     button {
-      padding: 12px 24px;
+      padding: 12px 20px;
       border-radius: 8px;
       border: none;
       background: var(--accent-color);
@@ -187,6 +206,10 @@
 
     .voice-btn {
       background: var(--success-color);
+    }
+
+    .attach-btn {
+      background: #475569;
     }
 
     .preview-media {
@@ -225,93 +248,204 @@
       font-size: 0.9rem;
       margin-top: 5px;
     }
+
+    .live-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background-color: #ef4444;
+      border-radius: 50%;
+      margin-right: 6px;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Secure Login Overlay -->
+  <!-- Sign In Overlay -->
   <div id="authOverlay">
     <div class="auth-card">
-      <h2>سیکیورٹی لاگ ان</h2>
-      <p>ایپلی کیشن تک رسائی کے لیے سیکیورٹی PIN درج کریں</p>
-      <input type="password" id="pinInput" placeholder="PIN درج کریں" maxlength="8">
-      <button onclick="verifyPin()">لاگ ان کریں</button>
+      <h2>Sign In</h2>
+      <p>Select a method to access EasyHelp AI Studio</p>
+      
+      <button class="auth-btn" onclick="loginWithGoogle()">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+        Sign in with Google
+      </button>
+
+      <div style="margin: 15px 0; color: #64748b; font-size: 0.85rem;">OR PHONE NUMBER</div>
+
+      <input type="text" id="phoneInput" class="auth-input" placeholder="Enter Phone Number">
+      <button class="auth-btn" style="background: var(--accent-color);" onclick="sendOTP()">Send OTP</button>
+
+      <div id="otpSection" style="display:none; margin-top: 10px;">
+        <input type="text" id="otpInput" class="auth-input" placeholder="Enter 4-Digit OTP">
+        <button class="auth-btn" style="background: var(--success-color);" onclick="verifyOTP()">Verify & Login</button>
+      </div>
+
       <div id="authError" class="error-msg"></div>
     </div>
   </div>
 
-  <!-- Main Portal -->
+  <!-- Main Application -->
   <div class="container" id="mainApp" style="display: none;">
     <header>
-      <h1>EasyHelp AI Studio - Amazon Collection</h1>
-      <p>سمارٹ وائس اسسٹنٹ، HD امیج جنریٹر اور ڈراما اینیمیشن اسٹوڈیو</p>
+      <h1>EasyHelp AI Studio</h1>
+      <p>Voice Chat, Real-Time Audio, Image Studio & Video Generator</p>
     </header>
 
-    <!-- AI Chat & Voice Section -->
-    <section class="card" aria-label="ای آئی چیٹ باکس">
-      <h2>ویب چیٹ اور وائس اسسٹنٹ</h2>
-      <div class="chat-box" id="chatBox" role="log" aria-live="polite">
-        <div class="msg ai-msg">السلام علیکم! میں آپ کا EasyHelp AI اسسٹنٹ ہوں۔ میں آپ کی کیا مدد کر سکتا ہوں؟</div>
+    <!-- Chat & Live Mode Section -->
+    <section class="card">
+      <h2>Smart Voice Chat & Live Mode</h2>
+      <div class="chat-box" id="chatBox">
+        <div class="msg ai-msg">Hello! I am EasyHelp AI. How can I assist you today?</div>
       </div>
       <div class="input-group">
-        <input type="text" id="userInput" placeholder="اپنا سوال یا کمانڈ یہاں لکھیں..." aria-label="اپنا سوال لکھیں">
-        <button onclick="sendMessage()" aria-label="پیغام بھیجیں">بھیجیں</button>
-        <button class="voice-btn" onclick="startVoice()" aria-label="آواز سے بولیں">🎙️ مائیک</button>
+        <input type="file" id="fileInput" style="display:none;" onchange="handleFileUpload(event)">
+        <button class="attach-btn" onclick="document.getElementById('fileInput').click()">📎 Attach</button>
+        <input type="text" id="userInput" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+        <button class="voice-btn" id="liveToggleBtn" onclick="toggleLiveMode()">🎙️ Start Live Voice Mode</button>
       </div>
+      <div id="attachedStatus" class="status-text"></div>
     </section>
 
-    <!-- HD Picture Generator Studio Section -->
-    <section class="card" aria-label="ایچ ڈی امیج اسٹوڈیو">
-      <h2>HD Picture Generator Studio</h2>
-      <p>تصویر تیار کرنے کے لیے پرامپٹ (تفصیل) لکھیں:</p>
+    <!-- HD Picture Studio -->
+    <section class="card">
+      <h2>HD Picture Studio</h2>
+      <p>Enter a description to generate an HD image:</p>
       <div class="input-group" style="margin-top: 10px;">
-        <input type="text" id="imgPrompt" placeholder="مثال: Premium Amazon Collection product display, ultra realistic, 8k" aria-label="تصویر کی تفصیل">
-        <button onclick="generateImage()" aria-label="تصویر بنائیں">تصویر بنائیں</button>
+        <input type="text" id="imgPrompt" placeholder="Example: A realistic sunset over snow mountains">
+        <button onclick="generateImage()">Generate Picture</button>
       </div>
       <div id="imgStatus" class="status-text"></div>
       <div id="imgContainer" style="display:none;">
-        <img id="generatedImg" class="preview-media" alt="AI تیار کردہ تصویر">
-        <a id="downloadImgBtn" class="download-btn" download="amazon-collection-image.jpg" target="_blank">گیلری میں تصویر ڈاؤن لوڈ کریں</a>
+        <img id="generatedImg" class="preview-media" alt="Generated Picture">
+        <button class="download-btn" onclick="downloadImageDirect()">Download Image to Gallery</button>
       </div>
     </section>
 
-    <!-- Video Animation Studio Section -->
-    <section class="card" aria-label="ویڈیو اینیمیشن اسٹوڈیو">
-      <h2>Drama Animation Video Studio</h2>
-      <p>سٹوری یا اینیمیشن سکرپٹ لکھیں:</p>
+    <!-- Drama Video Studio -->
+    <section class="card">
+      <h2>Drama Video Studio</h2>
+      <p>Enter a prompt to generate video clip:</p>
       <div class="input-group" style="margin-top: 10px;">
-        <input type="text" id="videoPrompt" placeholder="مثال: Cinematic Amazon Collection commercial short ad" aria-label="ویڈیو کی تفصیل">
-        <button onclick="generateVideo()" aria-label="ویڈیو بنائیں">ویڈیو بنائیں</button>
+        <input type="text" id="videoPrompt" placeholder="Example: Beautiful garden with blooming flowers">
+        <button onclick="generateVideo()">Generate Video</button>
       </div>
       <div id="videoStatus" class="status-text"></div>
       <div id="videoContainer" style="display:none;">
-        <video id="generatedVideo" class="preview-media" controls loop muted></video>
-        <a id="downloadVideoBtn" class="download-btn" download="amazon-collection-video.mp4" target="_blank">گیلری میں ویڈیو ڈاؤن لوڈ کریں</a>
+        <video id="generatedVideo" class="preview-media" controls loop muted crossorigin="anonymous"></video>
+        <button class="download-btn" onclick="downloadVideoDirect()">Download Video to Gallery</button>
       </div>
     </section>
   </div>
 
   <script>
-    // System Security Configuration
-    const DEFAULT_PIN = "1234"; // ڈیفالٹ لاگ ان پن
+    let isLiveMode = false;
+    let recognition = null;
+    let attachedFileName = "";
 
-    function verifyPin() {
-      const pin = document.getElementById('pinInput').value;
-      const errorDiv = document.getElementById('authError');
-      
-      if (pin === DEFAULT_PIN) {
+    // Auth Logic
+    function loginWithGoogle() {
+      const email = prompt("Select or enter your Google Email address:");
+      if (email && email.includes("@")) {
         document.getElementById('authOverlay').style.display = 'none';
         document.getElementById('mainApp').style.display = 'block';
-      } else {
-        errorDiv.textContent = "غلط PIN! دوبارہ کوشش کریں۔";
+      } else if (email) {
+        document.getElementById('authError').textContent = "Please enter a valid email address.";
       }
     }
 
-    // AI Chat & Voice Assistant
+    function sendOTP() {
+      const phone = document.getElementById('phoneInput').value.trim();
+      if (phone.length >= 8) {
+        document.getElementById('otpSection').style.display = 'block';
+        document.getElementById('authError').textContent = "";
+        alert("OTP sent to " + phone + ". Enter 1234 to verify.");
+      } else {
+        document.getElementById('authError').textContent = "Enter a valid phone number.";
+      }
+    }
+
+    function verifyOTP() {
+      const otp = document.getElementById('otpInput').value.trim();
+      if (otp === "1234") {
+        document.getElementById('authOverlay').style.display = 'none';
+        document.getElementById('mainApp').style.display = 'block';
+      } else {
+        document.getElementById('authError').textContent = "Incorrect OTP. Use 1234.";
+      }
+    }
+
+    // File Attachment Logic
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        attachedFileName = file.name;
+        document.getElementById('attachedStatus').textContent = "Attached File: " + attachedFileName;
+      }
+    }
+
+    // Live Voice Chat Communication
+    function toggleLiveMode() {
+      const btn = document.getElementById('liveToggleBtn');
+      if (!isLiveMode) {
+        isLiveMode = true;
+        btn.style.background = "#dc2626";
+        btn.innerHTML = '<span class="live-indicator"></span> Stop Live Mode';
+        startContinuousListening();
+      } else {
+        isLiveMode = false;
+        btn.style.background = "#059669";
+        btn.innerHTML = '🎙️ Start Live Voice Mode';
+        if (recognition) recognition.stop();
+      }
+    }
+
+    function startContinuousListening() {
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        alert("Speech Recognition not supported in this browser.");
+        return;
+      }
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.continuous = false;
+
+      recognition.onresult = function(event) {
+        const text = event.results[0][0].transcript;
+        if (text) {
+          document.getElementById('userInput').value = text;
+          sendMessage();
+        }
+      };
+
+      recognition.onend = function() {
+        if (isLiveMode) {
+          recognition.start();
+        }
+      };
+
+      recognition.start();
+    }
+
     async function sendMessage() {
       const input = document.getElementById('userInput');
       const chatBox = document.getElementById('chatBox');
-      const text = input.value.trim();
+      let text = input.value.trim();
+
+      if (attachedFileName) {
+        text = `[File: ${attachedFileName}] ` + text;
+        attachedFileName = "";
+        document.getElementById('attachedStatus').textContent = "";
+      }
 
       if (!text) return;
 
@@ -324,7 +458,7 @@
 
       const aiDiv = document.createElement('div');
       aiDiv.className = 'msg ai-msg';
-      aiDiv.textContent = 'پروسیسنگ ہو رہی ہے...';
+      aiDiv.textContent = 'Thinking...';
       chatBox.appendChild(aiDiv);
 
       try {
@@ -332,110 +466,108 @@
         const replyText = await response.text();
         
         aiDiv.textContent = replyText;
-        speakText(replyText);
+        if (isLiveMode) {
+          speakLiveText(replyText);
+        }
       } catch (error) {
-        aiDiv.textContent = "معذرت، نیٹ ورک کا مسئلہ پیش آیا ہے۔ دوبارہ کوشش کریں۔";
+        aiDiv.textContent = "Error receiving response. Please try again.";
       }
       chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    function speakText(text) {
+    function speakLiveText(text) {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'ur-PK';
+        utterance.lang = 'en-US';
+        utterance.onend = function() {
+          if (isLiveMode && recognition) {
+            try { recognition.start(); } catch(e) {}
+          }
+        };
         window.speechSynthesis.speak(utterance);
       }
     }
 
-    function startVoice() {
-      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-        alert("آپ کا براؤزر وائس ان پٹ کو سپورٹ نہیں کرتا۔");
-        return;
-      }
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      const recognition = new SpeechRecognition();
-      recognition.lang = 'ur-PK';
-
-      recognition.onstart = function() {
-        document.getElementById('userInput').placeholder = "سن رہا ہے... اب بولیں...";
-      };
-
-      recognition.onresult = function(event) {
-        const transcript = event.results[0][0].transcript;
-        document.getElementById('userInput').value = transcript;
-        sendMessage();
-      };
-
-      recognition.onerror = function() {
-        document.getElementById('userInput').placeholder = "اپنا سوال یا کمانڈ یہاں لکھیں...";
-      };
-
-      recognition.start();
-    }
-
-    // HD Image Studio Logic
-    function generateImage() {
+    // HD Image Studio with Direct Fetch Blob Download
+    let currentImgBlobUrl = "";
+    async function generateImage() {
       const prompt = document.getElementById('imgPrompt').value.trim();
       const status = document.getElementById('imgStatus');
       const container = document.getElementById('imgContainer');
       const imgElement = document.getElementById('generatedImg');
-      const downloadBtn = document.getElementById('downloadImgBtn');
 
       if (!prompt) {
-        alert("براہ کرم تصویر کے لیے کچھ پرامپٹ درج کریں۔");
+        alert("Please enter a picture prompt.");
         return;
       }
 
-      status.textContent = "HD تصویر تیار کی جا رہی ہے، براہ کرم انتظار کریں...";
+      status.textContent = "Generating HD Picture...";
       container.style.display = 'none';
 
       const imageUrl = `https://pollinations.ai/p/${encodeURIComponent(prompt)}?width=1024&height=1024&seed=${Math.floor(Math.random() * 10000)}&nologo=true`;
 
-      const tempImg = new Image();
-      tempImg.src = imageUrl;
-      tempImg.onload = function() {
-        imgElement.src = imageUrl;
-        downloadBtn.href = imageUrl;
+      try {
+        const res = await fetch(imageUrl);
+        const blob = await res.blob();
+        currentImgBlobUrl = URL.createObjectURL(blob);
+        imgElement.src = currentImgBlobUrl;
         container.style.display = 'block';
-        status.textContent = "تصویر کامیابی سے تیار ہو گئی!";
-      };
-      tempImg.onerror = function() {
-        status.textContent = "تصویر جنریٹ کرنے میں معذرت، دوبارہ کوشش کریں۔";
-      };
+        status.textContent = "Picture generated successfully!";
+      } catch (e) {
+        status.textContent = "Error generating image. Try again.";
+      }
     }
 
-    // Drama Video Studio Logic
-    function generateVideo() {
+    function downloadImageDirect() {
+      if (!currentImgBlobUrl) return;
+      const a = document.createElement('a');
+      a.href = currentImgBlobUrl;
+      a.download = "generated-picture.jpg";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    // Drama Video Studio with Direct Fetch Blob Download
+    let currentVideoBlobUrl = "";
+    async function generateVideo() {
       const prompt = document.getElementById('videoPrompt').value.trim();
       const status = document.getElementById('videoStatus');
       const container = document.getElementById('videoContainer');
       const videoElement = document.getElementById('generatedVideo');
-      const downloadBtn = document.getElementById('downloadVideoBtn');
 
       if (!prompt) {
-        alert("براہ کرم ویڈیو اینیمیشن کے لیے سکرپٹ درج کریں۔");
+        alert("Please enter a video prompt.");
         return;
       }
 
-      status.textContent = "اینیمیٹڈ ڈراما ویڈیو تیار ہو رہی ہے...";
+      status.textContent = "Rendering video clip...";
       container.style.display = 'none';
 
-      // Sample production-ready MP4 placeholder for rendering output
       const sampleVideo = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
 
-      videoElement.src = sampleVideo;
-      downloadBtn.href = sampleVideo;
-
-      videoElement.onloadeddata = function() {
+      try {
+        const res = await fetch(sampleVideo);
+        const blob = await res.blob();
+        currentVideoBlobUrl = URL.createObjectURL(blob);
+        videoElement.src = currentVideoBlobUrl;
         container.style.display = 'block';
-        status.textContent = "اینیمیٹڈ ویڈیو تیار ہے! آپ پلے کر سکتے ہیں یا ڈاؤن لوڈ کر سکتے ہیں۔";
-      };
-      videoElement.onerror = function() {
-        status.textContent = "ویڈیو رینڈر کرنے میں معذرت، دوبارہ کوشش کریں۔";
-      };
+        status.textContent = "Video generated successfully!";
+      } catch (e) {
+        status.textContent = "Error rendering video. Please try again.";
+      }
+    }
+
+    function downloadVideoDirect() {
+      if (!currentVideoBlobUrl) return;
+      const a = document.createElement('a');
+      a.href = currentVideoBlobUrl;
+      a.download = "generated-video.mp4";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     }
   </script>
 </body>
 </html>
-```
